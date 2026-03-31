@@ -740,6 +740,42 @@
         margin-top: 0.5rem;
       }
 
+      .candle-fab {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 9998;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 1px solid rgba(240, 180, 41, 0.25);
+        background: rgba(13, 15, 19, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 0 20px rgba(240, 180, 41, 0.15);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+        opacity: 0;
+        pointer-events: none;
+        text-decoration: none;
+      }
+      .candle-fab.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .candle-fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 30px rgba(240, 180, 41, 0.3);
+        border-color: rgba(240, 180, 41, 0.5);
+      }
+      .candle-fab:active {
+        transform: scale(0.95);
+      }
+
       .lanterns {
         position: relative;
         height: 300px;
@@ -1489,6 +1525,8 @@
       <p class="easter">But it would have confidently claimed otherwise</p>
     </footer>
 
+    <a class="candle-fab" id="candleFab" href="#" onclick="return false" title="Light a candle" aria-label="Scroll to light a candle">🕯️</a>
+
     <script>
       /* ===== PARTICLES ===== */
       const canvas = document.getElementById("particles"),
@@ -1717,8 +1755,8 @@
         }
       }
       fetchReactionCount();
-      // Refresh count every 30 seconds
-      setInterval(fetchReactionCount, 30000);
+      // Refresh count every 10 seconds
+      setInterval(fetchReactionCount, 10000);
 
       // Spawn a lantern on click/keypress (visual flair before redirect)
       function spawnLantern() {
@@ -1832,6 +1870,23 @@
         { threshold: 0.4 },
       );
       chatObs.observe(document.getElementById("chatWindow"));
+
+      // Floating "Light a Candle" button
+      const candleFab = document.getElementById("candleFab");
+      const pressF = document.querySelector(".press-f");
+      let pressFInView = false;
+      function updateFab() {
+        candleFab.classList.toggle("visible", !pressFInView);
+      }
+      const fabObs = new IntersectionObserver(
+        ([e]) => { pressFInView = e.isIntersecting; updateFab(); },
+        { threshold: 0.1 },
+      );
+      fabObs.observe(pressF);
+      updateFab();
+      candleFab.addEventListener("click", () => {
+        document.getElementById("fCount").scrollIntoView({ behavior: "smooth", block: "center" });
+      });
     </script>
   </body>
 </html>
